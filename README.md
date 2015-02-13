@@ -41,7 +41,8 @@ Encodes the string into base58
 
 #### `decode_base58(string)`
 
-Decodes base58 back into original string
+Decodes base58 back into original string. If the input passed in contains
+invalid characters `nil` and an error message are returned.
 
 # Contact
 

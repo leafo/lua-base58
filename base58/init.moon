@@ -82,7 +82,9 @@ decode_base58 = (str) ->
 
   for i=#str,1,-1
     char = str\sub i,i
-    char_byte = alphabet_char_to_i[char] - 1
+    char_i = alphabet_char_to_i[char]
+    return nil, "invalid string" unless char_i
+    char_byte = char_i - 1
     out\mul 58
     out\add char_byte
 

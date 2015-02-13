@@ -124,7 +124,11 @@ decode_base58 = function(str)
   local out = BigInt()
   for i = #str, 1, -1 do
     local char = str:sub(i, i)
-    local char_byte = alphabet_char_to_i[char] - 1
+    local char_i = alphabet_char_to_i[char]
+    if not (char_i) then
+      return nil, "invalid string"
+    end
+    local char_byte = char_i - 1
     out:mul(58)
     out:add(char_byte)
   end
