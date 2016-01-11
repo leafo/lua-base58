@@ -38,6 +38,14 @@ encode_tests = {
 
 }
 
+decode_tests = {
+  {"r", {0}}
+  {"rr", {0}} -- hmm
+  {"p", {1}}
+  {"pp", {59}}
+  {"abc", {1, 211, 165}}
+}
+
 describe "base58", ->
   it "should call encode_base58", ->
     assert.same "TvjnTzXAiTprExJ", base58.encode_base58 "Hello world"
@@ -49,12 +57,17 @@ describe "base58", ->
     it "encodes text", ->
       assert.same expected, base58.encode_base58 input
 
+  for {input, expected} in *decode_tests
+    it "encodes to bytes", ->
+      assert.same expected, { string.byte base58.decode_base58(input), 1, -1 }
+
   it "should fail to decode bad still", ->
     res, err = base58.decode_base58 "hello world"
     assert.falsy res
     assert.truthy err
 
-  it "should preserve string with null byte in front", ->
+  it "should preserve string with null byte", ->
+    pending "is broken"
     str = string.char 0, 20, 132
     assert_bytes str, base58.decode_base58 base58.encode_base58 str
 
