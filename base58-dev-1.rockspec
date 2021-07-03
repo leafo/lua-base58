@@ -1,5 +1,5 @@
 package = "base58"
-version = "dev-2"
+version = "dev-1"
 
 source = {
   url = "git://github.com/leafo/lua-base58.git",
