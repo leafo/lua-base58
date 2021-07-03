@@ -15,8 +15,10 @@ do
   end
   alphabet_char_to_i = _tbl_0
 end
+local unpack = table.unpack or unpack
 local BigInt
 do
+  local _class_0
   local _base_0 = {
     is_zero = function(self)
       local _list_0 = self.bytes
@@ -83,7 +85,7 @@ do
     end
   }
   _base_0.__index = _base_0
-  local _class_0 = setmetatable({
+  _class_0 = setmetatable({
     __init = function(self, bytes)
       if bytes == nil then
         bytes = { }

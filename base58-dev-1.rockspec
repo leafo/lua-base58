@@ -1,5 +1,5 @@
 package = "base58"
-version = "dev-1"
+version = "dev-2"
 
 source = {
   url = "git://github.com/leafo/lua-base58.git",
@@ -12,7 +12,7 @@ description = {
 }
 
 dependencies = {
-  "lua ~> 5.1"
+  "lua >= 5.1, <= 5.4"
 }
 
 build = {

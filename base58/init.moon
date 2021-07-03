@@ -3,6 +3,8 @@ alphabet = "rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"
 alphabet_i_to_char = { i, alphabet\sub(i,i) for i=1,#alphabet }
 alphabet_char_to_i = { alphabet\sub(i,i), i for i=1,#alphabet }
 
+unpack = table.unpack or unpack
+
 -- TODO: null byte in string seems to break things
 
 -- represents number as array of bytes (unpacked string)
