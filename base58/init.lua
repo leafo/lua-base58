@@ -114,17 +114,36 @@ end
 local encode_base58
 encode_base58 = function(str)
   local buffer = { }
+  local leading_zeros = 0
+  for i = 1, #str do
+    if str:byte(i) ~= 0 then
+      break
+    end
+    leading_zeros = leading_zeros + 1
+  end
   local int = BigInt:from_string(str)
   while not int:is_zero() do
     local _, r = int:div(58)
     table.insert(buffer, alphabet_i_to_char[r + 1])
   end
+  local zero_char = alphabet_i_to_char[1]
+  for _ = 1, leading_zeros do
+    table.insert(buffer, zero_char)
+  end
   return table.concat(buffer)
 end
 local decode_base58
 decode_base58 = function(str)
-  local out = BigInt()
+  local zero_char = alphabet_i_to_char[1]
+  local trailing_zeros = 0
   for i = #str, 1, -1 do
+    if str:sub(i, i) ~= zero_char then
+      break
+    end
+    trailing_zeros = trailing_zeros + 1
+  end
+  local out = BigInt()
+  for i = #str - trailing_zeros, 1, -1 do
     local char = str:sub(i, i)
     local char_i = alphabet_char_to_i[char]
     if not (char_i) then
@@ -133,6 +152,9 @@ decode_base58 = function(str)
     local char_byte = char_i - 1
     out:mul(58)
     out:add(char_byte)
+  end
+  for _ = 1, trailing_zeros do
+    table.insert(out.bytes, 0)
   end
   return out:to_string()
 end

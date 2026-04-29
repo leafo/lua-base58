@@ -36,13 +36,20 @@ encode_tests = {
   { string.char(175, 186, 36, 154, 126, 214, 185), "SbSwoY8NCf" }
   { string.char(57, 128, 31, 36, 92, 83, 238), "d2VP4hUPBs" }
 
+  { string.char(0), "r" }
+  { string.char(0, 0), "rr" }
+  { string.char(0, 1), "pr" }
+  { string.char(0, 0, 1, 2, 3), "FdLrr" }
+
 }
 
 decode_tests = {
   {"r", {0}}
-  {"rr", {0}} -- hmm
+  {"rr", {0, 0}}
+  {"rrr", {0, 0, 0}}
   {"p", {1}}
   {"pp", {59}}
+  {"pr", {0, 1}}
   {"abc", {1, 211, 165}}
 }
 
@@ -67,8 +74,15 @@ describe "base58", ->
     assert.truthy err
 
   it "should preserve string with null byte", ->
-    pending "is broken"
     str = string.char 0, 20, 132
+    assert_bytes str, base58.decode_base58 base58.encode_base58 str
+
+  it "should preserve string with multiple leading null bytes", ->
+    str = string.char 0, 0, 0, 20, 132
+    assert_bytes str, base58.decode_base58 base58.encode_base58 str
+
+  it "should preserve all-null-byte string", ->
+    str = string.char 0, 0, 0
     assert_bytes str, base58.decode_base58 base58.encode_base58 str
 
   it "should preserve string with multiple passes", ->

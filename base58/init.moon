@@ -5,7 +5,9 @@ alphabet_char_to_i = { alphabet\sub(i,i), i for i=1,#alphabet }
 
 unpack = table.unpack or unpack
 
--- TODO: null byte in string seems to break things
+-- this implementation emits/consumes base58 digits least-significant
+-- first, so the alphabet[0] padding for leading 0x00 bytes lives at the
+-- end of the encoded string rather than the front
 
 -- represents number as array of bytes (unpacked string)
 class BigInt
@@ -72,23 +74,41 @@ class BigInt
 encode_base58 = (str) ->
   buffer = {}
 
+  leading_zeros = 0
+  for i=1,#str
+    break if str\byte(i) != 0
+    leading_zeros += 1
+
   int = BigInt\from_string str
   while not int\is_zero!
     _, r = int\div 58
     table.insert buffer, alphabet_i_to_char[r + 1]
 
+  zero_char = alphabet_i_to_char[1]
+  for _=1,leading_zeros
+    table.insert buffer, zero_char
+
   table.concat buffer
 
 decode_base58 = (str) ->
+  zero_char = alphabet_i_to_char[1]
+  trailing_zeros = 0
+  for i=#str,1,-1
+    break if str\sub(i,i) != zero_char
+    trailing_zeros += 1
+
   out = BigInt!
 
-  for i=#str,1,-1
+  for i=#str - trailing_zeros,1,-1
     char = str\sub i,i
     char_i = alphabet_char_to_i[char]
     return nil, "invalid string" unless char_i
     char_byte = char_i - 1
     out\mul 58
     out\add char_byte
+
+  for _=1,trailing_zeros
+    table.insert out.bytes, 0
 
   out\to_string!
 
